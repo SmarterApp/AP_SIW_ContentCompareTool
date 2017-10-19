@@ -12,28 +12,7 @@ namespace SGContent
     {
         static void Main(string[] args)
         {
-            string appSettingsUrl = "https://raw.githubusercontent.com/SmarterApp/AP_ItemSampler/master/SmarterBalanced.SampleItems/src/SmarterBalanced.SampleItems.Web/appsettings.json";
-            string itemsPatchUrl = "https://raw.githubusercontent.com/SmarterApp/AP_ItemSampler/master/SmarterBalanced.SampleItems/ClaimConfigurations/ItemsPatch.xml";
-            SaveDependency(appSettingsUrl, "appsettings.json");
-            SaveDependency(itemsPatchUrl, "ItemsPatch.xml");
-
-            Console.WriteLine(Startup.Instance.AppSettings.SbContent.ContentRootDirectory);
-        }
-
-        static void SaveDependency(string url, string fileName)
-        {
-            using (var client = new HttpClient())
-            {
-                using (var result = client.GetAsync(url).Result)
-                {
-                    if (result.IsSuccessStatusCode)
-                    {
-                        string contents = result.Content.ReadAsStringAsync().Result;
-                        string path = Path.Combine(Directory.GetCurrentDirectory(), fileName);
-                        File.WriteAllText(path, contents);
-                    }
-                }
-            }
+            Console.WriteLine(AppSettingsProvider.Instance.Configuration["AppSettings:ContentCompareDirectory"]);
         }
     }
 }
