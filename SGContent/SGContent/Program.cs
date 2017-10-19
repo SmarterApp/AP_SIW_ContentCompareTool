@@ -1,7 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using SmarterBalanced.SampleItems.Dal.Configurations.Models;
 using System;
 using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace SGContent
 {
@@ -9,16 +12,28 @@ namespace SGContent
     {
         static void Main(string[] args)
         {
-            var settings = LoadAppSettings();
-            Console.WriteLine("Hello World!");
+            string appSettingsUrl = "https://raw.githubusercontent.com/SmarterApp/AP_ItemSampler/master/SmarterBalanced.SampleItems/src/SmarterBalanced.SampleItems.Web/appsettings.json";
+            string itemsPatchUrl = "https://raw.githubusercontent.com/SmarterApp/AP_ItemSampler/master/SmarterBalanced.SampleItems/ClaimConfigurations/ItemsPatch.xml";
+            SaveDependency(appSettingsUrl, "appsettings.json");
+            SaveDependency(itemsPatchUrl, "ItemsPatch.xml");
+
+            Console.WriteLine(Startup.Instance.AppSettings.SbContent.ContentRootDirectory);
         }
 
-        static AppSettings LoadAppSettings()
+        static void SaveDependency(string url, string fileName)
         {
-            string path = Path.Combine(Directory.GetCurrentDirectory(), "appsettings.json");
-            string appSettingsJson = File.ReadAllText(path);
-            AppSettings settings = JsonConvert.DeserializeObject<AppSettings>(appSettingsJson);
-            return settings;
+            using (var client = new HttpClient())
+            {
+                using (var result = client.GetAsync(url).Result)
+                {
+                    if (result.IsSuccessStatusCode)
+                    {
+                        string contents = result.Content.ReadAsStringAsync().Result;
+                        string path = Path.Combine(Directory.GetCurrentDirectory(), fileName);
+                        File.WriteAllText(path, contents);
+                    }
+                }
+            }
         }
     }
 }
