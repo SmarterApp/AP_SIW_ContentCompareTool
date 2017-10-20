@@ -1,6 +1,9 @@
 ﻿using SmarterBalanced.SampleItems.Dal.Providers.Models;
+using SmarterBalanced.SampleItems.Dal.Translations;
+using SmarterBalanced.SampleItems.Dal.Xml.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace SGContent
@@ -28,6 +31,36 @@ namespace SGContent
         public string OldCoreStandard { get; set; }
         public string NewCoreStandard { get; set; }
         public string NewStandardPublications { get; set; }
+
+        public Comparison(SampleItem sampleItem, ItemDigest digest)
+        {
+            var supportedPubs = AppSettingsProvider.Instance.AppSettings.SbContent.SupportedPublications;
+            StandardIdentifier digestIdentifier = StandardIdentifierTranslation.ToStandardIdentifier(digest, supportedPubs);
+
+            BankKey = digest.BankKey;
+            ItemKey = digest.ItemKey;
+
+            OldGrade = sampleItem.Grade;
+            NewGrade = GradeLevelsUtils.FromString(digest.GradeCode);
+            OldSubject = sampleItem.Subject?.Code;
+            NewSubject = digest.SubjectCode;
+            OldClaim = sampleItem.Claim?.ClaimNumber;
+            NewClaim = digestIdentifier?.ToClaimId();
+            OldTarget = sampleItem.CoreStandards?.Target?.Id;
+            NewTarget = digestIdentifier?.ToTargetId();
+            OldInteractionCode = sampleItem.InteractionType?.Code;
+            NewInteractionCode = digest.InteractionTypeCode;
+            OldAslSupported = sampleItem.AslSupported;
+            NewAslSupported = SampleItemTranslation.AslSupported(digest);
+            OldStimulus = sampleItem.AssociatedStimulus;
+            NewStimulus = digest.AssociatedStimulus;
+            OldDOK = sampleItem.DepthOfKnowledge;
+            NewDOK = digest.DepthOfKnowledge;
+            OldCoreStandard = sampleItem.CoreStandards?.CommonCoreStandardsId;
+            NewCoreStandard = digestIdentifier?.CommonCoreStandard;
+
+            NewStandardPublications = String.Join(", ", digest.StandardPublications.Select(sp => sp.PrimaryStandard));
+        }
 
         public bool Equal
         {
