@@ -8,7 +8,7 @@ using System.Text;
 
 namespace SGContent
 {
-    class NewItem
+    public class NewItem
     {
         public int BankKey { get; set; }
         public int ItemKey { get; set; }

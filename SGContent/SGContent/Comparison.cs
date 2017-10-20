@@ -8,7 +8,7 @@ using System.Text;
 
 namespace SGContent
 {
-    class Comparison
+    public class Comparison
     {
         public int BankKey { get; set; }
         public int ItemKey { get; set; }
@@ -32,9 +32,8 @@ namespace SGContent
         public string NewCoreStandard { get; set; }
         public string NewStandardPublications { get; set; }
 
-        public Comparison(SampleItem sampleItem, ItemDigest digest)
+        public Comparison(SampleItem sampleItem, ItemDigest digest, string[] supportedPubs)
         {
-            var supportedPubs = AppSettingsProvider.Instance.AppSettings.SbContent.SupportedPublications;
             StandardIdentifier digestIdentifier = StandardIdentifierTranslation.ToStandardIdentifier(digest, supportedPubs);
 
             BankKey = digest.BankKey;

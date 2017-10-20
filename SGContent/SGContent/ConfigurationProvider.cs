@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using SmarterBalanced.SampleItems.Dal.Configurations.Models;
 using System;
 using System.Collections.Generic;
@@ -8,22 +9,21 @@ using System.Text;
 
 namespace SGContent
 {
-    public class AppSettingsProvider
+    public class ConfigurationProvider
     {
         public IConfigurationRoot Configuration { get; }
         public AppSettings AppSettings { get; }
+        private readonly ILogger logger;
 
-        private static AppSettingsProvider instance;
-        private static readonly object _lock = new object();
-
-
-        public AppSettingsProvider()
+        public ConfigurationProvider(ILoggerFactory loggerFactory)
         {
+            logger = loggerFactory.CreateLogger<ConfigurationProvider>();
             string appSettingsUrl = "https://raw.githubusercontent.com/SmarterApp/AP_ItemSampler/master/SmarterBalanced.SampleItems/src/SmarterBalanced.SampleItems.Web/appsettings.json";
             string itemsPatchUrl = "https://raw.githubusercontent.com/SmarterApp/AP_ItemSampler/master/SmarterBalanced.SampleItems/ClaimConfigurations/ItemsPatch.xml";
 
             SaveDependency(appSettingsUrl, "appsettings.json");
             SaveDependency(itemsPatchUrl, "ItemsPatch.xml");
+            logger.LogInformation("Successfully downloaded dependencies");
 
             var builder = new ConfigurationBuilder()
               .SetBasePath(Directory.GetCurrentDirectory())
@@ -34,22 +34,7 @@ namespace SGContent
 
             Configuration.Bind(appSettings);
             AppSettings = appSettings;
-        }
-
-        public static AppSettingsProvider Instance
-        {
-            get
-            {
-                lock (_lock)
-                {
-                    if (instance == null)
-                    {
-                        instance = new AppSettingsProvider();
-                    }
-                    return instance;
-                }
-
-            }
+            logger.LogInformation("Successfully loaded configuration");
         }
 
         static void SaveDependency(string url, string fileName)

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SmarterBalanced.SampleItems.Dal.Configurations.Models;
 using System;
@@ -8,11 +9,16 @@ using System.Threading.Tasks;
 
 namespace SGContent
 {
-    class Program
+    public class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine(AppSettingsProvider.Instance.Configuration["AppSettings:ContentCompareDirectory"]);
+            ILoggerFactory loggerFactory = new LoggerFactory()
+              .AddConsole(LogLevel.Debug)
+              .AddDebug(LogLevel.Debug);
+            ILogger logger = loggerFactory.CreateLogger<Program>();
+            ConfigurationProvider config = new ConfigurationProvider(loggerFactory);
+
         }
     }
 }
