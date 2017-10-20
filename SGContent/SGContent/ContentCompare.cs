@@ -39,5 +39,11 @@ namespace SGContent
             var differentItems = matchingItems.Where(c => !c.Equal);
             return differentItems;
         }
+
+        public IEnumerable<NewItem> GetNewItems()
+        {
+            var newItems = NewDigests.Where(d => OldSampleItems.FirstOrDefault(si => si.ItemKey == d.ItemKey) == null)
+                .Select(digest => new NewItem(digest, );
+        }
     }
 }
