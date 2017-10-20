@@ -41,9 +41,9 @@ namespace SGContent
 
         public IEnumerable<NewItem> GetNewItems()
         {
-            //var newItems = NewDigests.Where(d => OldSampleItems.FirstOrDefault(si => si.ItemKey == d.ItemKey) == null)
-            //    .Select(digest => new NewItem(digest, );
-            throw new NotImplementedException();
+            var newItems = newDigests.Where(d => oldSampleItems.FirstOrDefault(si => si.ItemKey == d.ItemKey) == null)
+                .Select(digest => new NewItem(digest, config.AppSettings));
+            return newItems;
         }
     }
 }
