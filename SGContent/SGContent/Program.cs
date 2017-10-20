@@ -17,7 +17,10 @@ namespace SGContent
               .AddConsole(LogLevel.Debug)
               .AddDebug(LogLevel.Debug);
             ILogger logger = loggerFactory.CreateLogger<Program>();
+
             ConfigurationProvider config = new ConfigurationProvider(loggerFactory);
+            config.DownloadConfigFiles();
+
             ContentAnalyzer analyzer = new ContentAnalyzer(loggerFactory, config);
             analyzer.Analyze();
         }
