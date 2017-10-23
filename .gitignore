@@ -288,8 +288,8 @@ __pycache__/
 *.xsd.cs
 
 # Config files
-SGContent/config/
+Source/Configuration/
 appsettings.json
 
 # Output files
-SGContent/OutputFiles/
+Source/OutputFiles/

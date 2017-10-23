@@ -39,11 +39,31 @@ namespace SGContent
             return differentItems;
         }
 
-        public IEnumerable<NewItem> GetNewItems()
+        public IEnumerable<ItemPrintout> GetNewItems()
         {
             var newItems = newDigests.Where(d => oldSampleItems.FirstOrDefault(si => si.ItemKey == d.ItemKey) == null)
-                .Select(digest => new NewItem(digest, config.AppSettings));
+                .Select(digest => new ItemPrintout(digest, config.AppSettings));
             return newItems;
+        }
+
+        public IEnumerable<ItemPrintout> GetItemsWithoutScoring()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<ItemPrintout> GetItemsMissingSiwRequirements()
+        {
+            var missingReqs = newDigests
+                .Where(digest =>
+                {
+                    if (digest.StandardPublications == null || digest.StandardPublications.Count == 0) return true;
+                    if (String.IsNullOrEmpty(digest.GradeCode)) return true;
+                    if (String.IsNullOrEmpty(digest.InteractionTypeCode)) return true;
+                    if (String.IsNullOrEmpty(digest.SubjectCode)) return true;
+                    return false;
+                })
+                .Select(digest => new ItemPrintout(digest, config.AppSettings));
+            return missingReqs;
         }
     }
 }

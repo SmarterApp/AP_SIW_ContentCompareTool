@@ -8,7 +8,7 @@ using System.Text;
 
 namespace SGContent
 {
-    public class NewItem
+    public class ItemPrintout
     {
         public int BankKey { get; set; }
         public int ItemKey { get; set; }
@@ -21,7 +21,7 @@ namespace SGContent
         public int? Stimulus { get; set; }
         public string DOK { get; set; }
 
-        public NewItem(ItemDigest digest, AppSettings settings)
+        public ItemPrintout(ItemDigest digest, AppSettings settings)
         {
             var supportedPubs = settings.SbContent.SupportedPublications;
             StandardIdentifier digestIdentifier = StandardIdentifierTranslation.ToStandardIdentifier(digest, supportedPubs);
