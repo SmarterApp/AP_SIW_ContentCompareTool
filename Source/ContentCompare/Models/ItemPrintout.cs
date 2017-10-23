@@ -3,8 +3,7 @@ using SmarterBalanced.SampleItems.Dal.Providers.Models;
 using SmarterBalanced.SampleItems.Dal.Translations;
 using SmarterBalanced.SampleItems.Dal.Xml.Models;
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace SGContent
 {
@@ -20,6 +19,7 @@ namespace SGContent
         public bool AslSupported { get; set; }
         public int? Stimulus { get; set; }
         public string DOK { get; set; }
+        public string StandardPubs { get; set; }
 
         public ItemPrintout(ItemDigest digest, AppSettings settings)
         {
@@ -35,6 +35,7 @@ namespace SGContent
             AslSupported = SampleItemTranslation.AslSupported(digest);
             Stimulus = digest.AssociatedStimulus;
             DOK = digest.DepthOfKnowledge;
+            StandardPubs = String.Join(", ", digest.StandardPublications.Select(sp => sp.PrimaryStandard));
         }
     }
 }

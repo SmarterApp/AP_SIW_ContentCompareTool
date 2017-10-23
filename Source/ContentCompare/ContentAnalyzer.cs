@@ -21,18 +21,18 @@ namespace SGContent
 
         public void Analyze()
         {
-            string dirPath = Path.Combine(Directory.GetCurrentDirectory(), configurationProvider.Configuration["AppSettings:OutputDirectory"]);
-
-            string matchingItemsPath = Path.Combine(dirPath, "MatchingItemsDiff.csv");
-            WriteCsv(matchingItemsPath, content.Compare());
-
-            string newItemsPath = Path.Combine(dirPath, "NewItems.csv");
-            WriteCsv(newItemsPath, content.GetNewItems());
+            WriteCsv("MatchingItemsDiff.csv", content.Compare());
+            WriteCsv("NewItems.csv", content.GetNewItems());
+            WriteCsv("MissingSiwReqs.csv", content.GetItemsMissingSiwRequirements());
         }
 
         private void WriteCsv(string fileName, IEnumerable collection)
         {
-            var writer = new StreamWriter(fileName);
+            string path = Path.Combine(
+                Directory.GetCurrentDirectory(), 
+                configurationProvider.Configuration["AppSettings:OutputDirectory"], 
+                fileName);
+            var writer = new StreamWriter(path);
             var csv = new CsvWriter(writer);
 
             csv.WriteRecords(collection);
