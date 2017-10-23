@@ -21,10 +21,12 @@ namespace SGContent
 
         public void Analyze()
         {
-            string matchingItemsPath = Path.Combine(Directory.GetCurrentDirectory(), "MatchingItemsDiff.csv");
+            string dirPath = Path.Combine(Directory.GetCurrentDirectory(), configurationProvider.Configuration["AppSettings:OutputDirectory"]);
+
+            string matchingItemsPath = Path.Combine(dirPath, "MatchingItemsDiff.csv");
             WriteCsv(matchingItemsPath, content.Compare());
 
-            string newItemsPath = Path.Combine(Directory.GetCurrentDirectory(), "NewItems.csv");
+            string newItemsPath = Path.Combine(dirPath, "NewItems.csv");
             WriteCsv(newItemsPath, content.GetNewItems());
         }
 

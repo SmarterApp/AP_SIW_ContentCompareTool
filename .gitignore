@@ -290,3 +290,6 @@ __pycache__/
 # Config files
 SGContent/config/
 appsettings.json
+
+# Output files
+SGContent/OutputFiles/
