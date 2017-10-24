@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using ContentCompare.Models;
+using Microsoft.Extensions.Logging;
 using SmarterBalanced.SampleItems.Dal.Configurations.Models;
 using SmarterBalanced.SampleItems.Dal.Providers;
 using SmarterBalanced.SampleItems.Dal.Providers.Models;
@@ -26,7 +27,7 @@ namespace SGContent
             this.config = config;
         }
 
-        public IEnumerable<Comparison> Compare()
+        public IEnumerable<Comparison> CompareOldAndNew()
         {
             var matchingItems = newDigests.Join(oldSampleItems,
                 digest => digest.ItemKey,
@@ -68,6 +69,23 @@ namespace SGContent
                 })
                 .Select(digest => new ItemPrintout(digest, config.AppSettings));
             return missingReqs;
+        }
+
+        public IEnumerable<ScoreComparison> CompareScoreInfo()
+        {
+            var matchingItems = newDigests.Join(oldSampleItems,
+                digest => digest.ItemKey,
+                sampleItem => sampleItem.ItemKey,
+                (digest, sampleItem) => new { Digest = digest, SampleItem = sampleItem });
+
+            var scoreComparison = matchingItems.Select(match =>
+            {
+                var digestRubrics = SampleItemTranslation.GetRubrics(match.Digest, config.AppSettings);
+                var sampleItemRubrics = match.SampleItem.Rubrics;
+
+                return new ScoreComparison(sampleItemRubrics, digestRubrics);
+            });
+            return scoreComparison.Where(sc => !sc.Equal);
         }
     }
 }

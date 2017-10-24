@@ -21,10 +21,11 @@ namespace SGContent
 
         public void Analyze()
         {
-            WriteCsv("MatchingItemsDiff.csv", content.Compare());
+            WriteCsv("MatchingItemsDiff.csv", content.CompareOldAndNew());
             WriteCsv("NewItems.csv", content.GetNewItems());
             WriteCsv("MissingSiwReqs.csv", content.GetItemsMissingSiwRequirements());
             WriteCsv("MissingScoring.csv", content.GetItemsWithoutScoring());
+            WriteCsv("ScoreInfoDiff.csv", content.CompareScoreInfo());
         }
 
         private void WriteCsv(string fileName, IEnumerable collection)
