@@ -2,6 +2,7 @@
 using SmarterBalanced.SampleItems.Dal.Configurations.Models;
 using SmarterBalanced.SampleItems.Dal.Providers;
 using SmarterBalanced.SampleItems.Dal.Providers.Models;
+using SmarterBalanced.SampleItems.Dal.Translations;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -48,7 +49,10 @@ namespace SGContent
 
         public IEnumerable<ItemPrintout> GetItemsWithoutScoring()
         {
-            throw new NotImplementedException();
+            var noScoring = newDigests
+                .Where(digest => SampleItemTranslation.GetRubrics(digest, config.AppSettings).Length == 0)
+                .Select(digest => new ItemPrintout(digest, config.AppSettings));
+            return noScoring;
         }
 
         public IEnumerable<ItemPrintout> GetItemsMissingSiwRequirements()

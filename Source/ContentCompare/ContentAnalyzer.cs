@@ -24,6 +24,7 @@ namespace SGContent
             WriteCsv("MatchingItemsDiff.csv", content.Compare());
             WriteCsv("NewItems.csv", content.GetNewItems());
             WriteCsv("MissingSiwReqs.csv", content.GetItemsMissingSiwRequirements());
+            WriteCsv("MissingScoring.csv", content.GetItemsWithoutScoring());
         }
 
         private void WriteCsv(string fileName, IEnumerable collection)
