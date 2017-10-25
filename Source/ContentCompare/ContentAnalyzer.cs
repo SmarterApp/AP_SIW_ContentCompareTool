@@ -12,11 +12,13 @@ namespace SGContent
     {
         private readonly ConfigurationProvider configurationProvider;
         private readonly ContentCompare content;
+        private readonly ILogger logger;
 
         public ContentAnalyzer(ILoggerFactory loggerFactory, ConfigurationProvider config) 
         {
             content = new ContentCompare(config, loggerFactory);
             configurationProvider = new ConfigurationProvider(loggerFactory);
+            logger = loggerFactory.CreateLogger<ContentAnalyzer>();
         }
 
         public void Analyze()
@@ -34,6 +36,14 @@ namespace SGContent
                 Directory.GetCurrentDirectory(), 
                 configurationProvider.Configuration["AppSettings:OutputDirectory"], 
                 fileName);
+
+            Directory.CreateDirectory(Path.GetDirectoryName(path));
+            if (File.Exists(path))
+            {
+                logger.LogInformation($"File exists, removing {fileName}");
+                File.Delete(path);
+            }
+
             var writer = new StreamWriter(path);
             var csv = new CsvWriter(writer);
 

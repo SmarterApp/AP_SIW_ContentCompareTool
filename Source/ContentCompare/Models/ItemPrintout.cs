@@ -1,4 +1,5 @@
-﻿using SmarterBalanced.SampleItems.Dal.Configurations.Models;
+﻿using ContentCompare.Models;
+using SmarterBalanced.SampleItems.Dal.Configurations.Models;
 using SmarterBalanced.SampleItems.Dal.Providers.Models;
 using SmarterBalanced.SampleItems.Dal.Translations;
 using SmarterBalanced.SampleItems.Dal.Xml.Models;
@@ -21,8 +22,9 @@ namespace SGContent
         public string DOK { get; set; }
         public string StandardPubs { get; set; }
 
-        public ItemPrintout(ItemDigest digest, AppSettings settings)
+        public ItemPrintout(ItemDigestScoring itemDigestScoring, AppSettings settings)
         {
+            var digest = itemDigestScoring.ItemDigest;
             var supportedPubs = settings.SbContent.SupportedPublications;
             StandardIdentifier digestIdentifier = StandardIdentifierTranslation.ToStandardIdentifier(digest, supportedPubs);
             BankKey = digest.BankKey;
