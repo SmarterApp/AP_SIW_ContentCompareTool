@@ -27,10 +27,13 @@ namespace SGContent
                 .LoadItemDigests(config.Configuration["AppSettings:ContentCompareDirectory"]).Result;
             var context = SampleItemsProvider.LoadContext(config.AppSettings, logger);
             oldSampleItems = context.SampleItems;
+            var supportedPubs = config.AppSettings.SbContent.SupportedPublications;
+
             newDigestsScoring = newItemDigests.Select(digest =>
             {
                 var scoring = SampleItemsScoringTranslation.ToSampleItemsScore(digest, config.AppSettings, context.InteractionTypes);
-                return new ItemDigestScoring(digest, scoring);
+                var standardIdentifier = StandardIdentifierTranslation.ToStandardIdentifier(digest, supportedPubs);
+                return new ItemDigestScoring(digest, scoring, standardIdentifier);
             }).ToImmutableArray();
         }
 
