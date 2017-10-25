@@ -94,7 +94,11 @@ namespace SGContent
                 (digest, sampleItem) => new { Digest = digest, SampleItem = sampleItem });
 
             var scoreComparison = matchingItems.Select(match =>
-                new ScoreComparison(match.Digest.SampleItemScoring, match.SampleItem.SampleItemScoring));
+                new ScoreComparison(
+                    oldScoring: match.Digest.SampleItemScoring, 
+                    newScoring: match.SampleItem.SampleItemScoring, 
+                    itemKey: match.Digest.ItemDigest.ItemKey, 
+                    bankKey: match.Digest.ItemDigest.BankKey));
 
             return scoreComparison.Where(sc => !sc.Equal);
         }

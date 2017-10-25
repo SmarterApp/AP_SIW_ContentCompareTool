@@ -8,6 +8,8 @@ namespace ContentCompare.Models
 {
     public class ScoreComparison
     {
+        public int BankKey { get; set; }
+        public int ItemKey { get; set; }
         public int? OldRubricsCount { get; set; }
         public int? NewRubricsCount { get; set; }
         public int? OldEntriesCount { get; set; }
@@ -17,7 +19,11 @@ namespace ContentCompare.Models
         public int? OldScoreOptionsCount { get; set; }
         public int? NewScoreOptionsCount { get; set; }
 
-        public ScoreComparison(SampleItemScoring oldScoring, SampleItemScoring newScoring)
+        public ScoreComparison(
+            SampleItemScoring oldScoring, 
+            SampleItemScoring newScoring,
+            int itemKey, 
+            int bankKey)
         {
             OldRubricsCount = oldScoring?.Rubrics.Count();
             NewRubricsCount = newScoring?.Rubrics.Count();
@@ -27,6 +33,8 @@ namespace ContentCompare.Models
             NewSamplesCount = newScoring?.Rubrics.SelectMany(r => r.Samples).Count();
             OldScoreOptionsCount = oldScoring?.ScoringOptions.Length;
             NewScoreOptionsCount = newScoring?.ScoringOptions.Length;
+            ItemKey = itemKey;
+            BankKey = bankKey;
         }
 
         public bool Equal
