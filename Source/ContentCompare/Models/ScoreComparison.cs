@@ -8,28 +8,35 @@ namespace ContentCompare.Models
 {
     public class ScoreComparison
     {
-        public int OldRubricsCount { get; set; }
-        public int NewRubricsCount { get; set; }
-        public int OldEntriesCount { get; set; }
-        public int NewEntriesCount { get; set; }
-        public int OldSamplesCount { get; set; }
-        public int NewSamplesCount { get; set; }
+        public int? OldRubricsCount { get; set; }
+        public int? NewRubricsCount { get; set; }
+        public int? OldEntriesCount { get; set; }
+        public int? NewEntriesCount { get; set; }
+        public int? OldSamplesCount { get; set; }
+        public int? NewSamplesCount { get; set; }
+        public int? OldScoreOptionsCount { get; set; }
+        public int? NewScoreOptionsCount { get; set; }
 
-        public ScoreComparison(IEnumerable<Rubric> oldRubrics, IEnumerable<Rubric> newRubrics)
+        public ScoreComparison(SampleItemScoring oldScoring, SampleItemScoring newScoring)
         {
-            OldRubricsCount = oldRubrics.Count();
-            NewRubricsCount = newRubrics.Count();
-            OldEntriesCount = oldRubrics.SelectMany(r => r.RubricEntries).Count();
-            NewEntriesCount = newRubrics.SelectMany(r => r.RubricEntries).Count();
-            OldSamplesCount = oldRubrics.SelectMany(r => r.Samples).Count();
-            NewSamplesCount = newRubrics.SelectMany(r => r.Samples).Count();
+            OldRubricsCount = oldScoring?.Rubrics.Count();
+            NewRubricsCount = newScoring?.Rubrics.Count();
+            OldEntriesCount = oldScoring?.Rubrics.SelectMany(r => r.RubricEntries).Count();
+            NewEntriesCount = newScoring?.Rubrics.SelectMany(r => r.RubricEntries).Count();
+            OldSamplesCount = oldScoring?.Rubrics.SelectMany(r => r.Samples).Count();
+            NewSamplesCount = newScoring?.Rubrics.SelectMany(r => r.Samples).Count();
+            OldScoreOptionsCount = oldScoring?.ScoringOptions.Length;
+            NewScoreOptionsCount = newScoring?.ScoringOptions.Length;
         }
 
-        public bool Equal { get
+        public bool Equal
+        {
+            get
             {
                 if (NewRubricsCount != OldRubricsCount) return false;
                 if (NewEntriesCount != OldEntriesCount) return false;
                 if (NewSamplesCount != OldSamplesCount) return false;
+                if (NewScoreOptionsCount != OldScoreOptionsCount) return false;
                 return true;
             }
         }
