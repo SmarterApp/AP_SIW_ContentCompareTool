@@ -1,4 +1,5 @@
-﻿using SmarterBalanced.SampleItems.Dal.Providers.Models;
+﻿using ContentCompare.Models;
+using SmarterBalanced.SampleItems.Dal.Providers.Models;
 using SmarterBalanced.SampleItems.Dal.Translations;
 using SmarterBalanced.SampleItems.Dal.Xml.Models;
 using System;
@@ -32,9 +33,11 @@ namespace SGContent
         public string NewCoreStandard { get; set; }
         public string NewStandardPublications { get; set; }
 
-        public Comparison(SampleItem sampleItem, ItemDigest digest, string[] supportedPubs)
+        public Comparison(SampleItem sampleItem, ItemDigestScoring itemDigestScoring, string[] supportedPubs)
         {
-            StandardIdentifier digestIdentifier = StandardIdentifierTranslation.ToStandardIdentifier(digest, supportedPubs);
+            var digest = itemDigestScoring.ItemDigest;
+            StandardIdentifier digestIdentifier = StandardIdentifierTranslation
+                .ToStandardIdentifier(digest, supportedPubs);
 
             BankKey = digest.BankKey;
             ItemKey = digest.ItemKey;

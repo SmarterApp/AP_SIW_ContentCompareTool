@@ -54,7 +54,7 @@ namespace SGContent
             SaveDependency(standardsUrl, AppSettings.SbContent.CoreStandardsXMLPath);
         }
 
-        static void SaveDependency(string url, string fileName)
+        private void SaveDependency(string url, string fileName)
         {
             using (var client = new HttpClient())
             {
@@ -64,6 +64,13 @@ namespace SGContent
                     {
                         string contents = result.Content.ReadAsStringAsync().Result;
                         string path = Path.Combine(Directory.GetCurrentDirectory(), fileName);
+                        Directory.CreateDirectory(Path.GetDirectoryName(path));
+                        if (File.Exists(path))
+                        {
+                            logger.LogInformation($"File exists, removing {fileName}");
+                            File.Delete(path);
+                        }
+
                         File.WriteAllText(path, contents);
                     }
                 }
