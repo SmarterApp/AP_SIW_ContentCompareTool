@@ -29,6 +29,10 @@ namespace SGContent
         public bool? NewAslSupported { get; set; }
         public int? OldStimulus { get; set; }
         public int? NewStimulus { get; set; }
+        public int? OldTutorial { get; set; }
+        public int? NewTutorial { get; set; }
+        public int? OldWordlist { get; set; }
+        public int? NewWordList { get; set; }
         public string OldDOK { get; set; }
         public string NewDOK { get; set; }
         public string OldCoreStandard { get; set; }
@@ -60,6 +64,8 @@ namespace SGContent
             NewAslSupported = SampleItemTranslation.AslSupported(digest);
             OldStimulus = sampleItem.AssociatedStimulus;
             NewStimulus = digest.AssociatedStimulus;
+            OldTutorial = sampleItem.AssociatedTutorial;
+            NewTutorial = digest.AssociatedTutorial;
             OldDOK = sampleItem.DepthOfKnowledge;
             NewDOK = digest.DepthOfKnowledge;
             OldCoreStandard = sampleItem.CoreStandards?.CommonCoreStandardsId;
@@ -80,6 +86,7 @@ namespace SGContent
                 if (NewInteractionCode != OldInteractionCode) return false;
                 if (NewAslSupported != OldAslSupported) return false;
                 if (NewStimulus != OldStimulus) return false;
+                if (NewTutorial != OldTutorial) return false;
                 if (NewDOK != OldDOK) return false;
                 if (NewCoreStandard != OldCoreStandard) return false;
                 return true;
