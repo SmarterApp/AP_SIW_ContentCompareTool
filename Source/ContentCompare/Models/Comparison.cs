@@ -21,6 +21,8 @@ namespace SGContent
         public string NewClaim { get; set; }
         public string OldTarget { get; set; }
         public string NewTarget { get; set; }
+        public bool OldAllowCalc { get; set; }
+        public bool NewAllowCalc { get; set; }
         public string OldInteractionCode { get; set; }
         public string NewInteractionCode { get; set; }
         public bool? OldAslSupported { get; set; }
@@ -50,6 +52,8 @@ namespace SGContent
             NewClaim = digestIdentifier?.ToClaimId();
             OldTarget = sampleItem.CoreStandards?.Target?.Id;
             NewTarget = digestIdentifier?.ToTargetId();
+            OldAllowCalc = sampleItem.AllowCalculator;
+            NewAllowCalc = digest.AllowCalculator;
             OldInteractionCode = sampleItem.InteractionType?.Code;
             NewInteractionCode = digest.InteractionTypeCode;
             OldAslSupported = sampleItem.AslSupported;
@@ -72,6 +76,7 @@ namespace SGContent
                 if (NewSubject != OldSubject) return false;
                 if (NewClaim != OldClaim) return false;
                 if (NewTarget != OldTarget) return false;
+                if (NewAllowCalc != OldAllowCalc) return false;
                 if (NewInteractionCode != OldInteractionCode) return false;
                 if (NewAslSupported != OldAslSupported) return false;
                 if (NewStimulus != OldStimulus) return false;
