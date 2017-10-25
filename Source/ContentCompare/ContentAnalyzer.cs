@@ -28,6 +28,7 @@ namespace SGContent
             WriteCsv("MissingSiwReqs.csv", content.GetItemsMissingSiwRequirements());
             WriteCsv("MissingScoring.csv", content.GetItemsWithoutScoring());
             WriteCsv("ScoreInfoDiff.csv", content.CompareScoreInfo());
+            WriteCsv("MissingPublications.csv", content.GetMissingPublications());
         }
 
         private void WriteCsv(string fileName, IEnumerable collection)

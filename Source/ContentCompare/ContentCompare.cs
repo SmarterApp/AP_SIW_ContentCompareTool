@@ -105,5 +105,13 @@ namespace SGContent
 
             return scoreComparison.Where(sc => !sc.Equal);
         }
+
+        public IEnumerable<ItemPrintout> GetMissingPublications()
+        {
+            var missingPubs = newDigestsScoring
+                .Where(d => String.IsNullOrEmpty(d.StandardIdentifier?.Publication))
+                .Select(d => new ItemPrintout(d, config.AppSettings));
+            return missingPubs;
+        }
     }
 }
