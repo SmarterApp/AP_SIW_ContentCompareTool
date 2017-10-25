@@ -63,7 +63,8 @@ namespace SGContent
         public IEnumerable<ItemPrintout> GetItemsWithoutScoring()
         {
             var noScoring = newDigestsScoring
-                .Where(digest => !digest.SampleItemScoring.Rubrics.Any())
+                .Where(digest => !(digest.SampleItemScoring?.Rubrics.Any() ?? false)
+                              && !(digest.SampleItemScoring?.ScoringOptions.Any() ?? false))
                 .Select(digest => new ItemPrintout(digest, config.AppSettings));
             return noScoring;
         }
