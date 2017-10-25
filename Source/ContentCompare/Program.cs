@@ -23,6 +23,8 @@ namespace SGContent
 
             ContentAnalyzer analyzer = new ContentAnalyzer(loggerFactory, config);
             analyzer.Analyze();
+            Console.Write("\n\nPress any key to close...");
+            Console.ReadKey();
         }
     }
 }
