@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace SGContent
 {
@@ -14,22 +15,29 @@ namespace SGContent
         private readonly ContentCompare content;
         private readonly ILogger logger;
 
-        public ContentAnalyzer(ILoggerFactory loggerFactory, ConfigurationProvider config) 
+        public ContentAnalyzer(ILoggerFactory loggerFactory, ConfigurationProvider config)
         {
             content = new ContentCompare(config, loggerFactory);
+            content.LoadAllItems();
             configurationProvider = new ConfigurationProvider(loggerFactory);
             logger = loggerFactory.CreateLogger<ContentAnalyzer>();
         }
 
         public void Analyze()
         {
-            WriteCsv("MatchingItemsDiff.csv", content.CompareOldAndNew());
-            WriteCsv("NewItems.csv", content.GetNewItems());
-            WriteCsv("MissingSiwReqs.csv", content.GetItemsMissingSiwRequirements());
-            WriteCsv("MissingScoring.csv", content.GetItemsWithoutScoring());
-            WriteCsv("ScoreInfoDiff.csv", content.CompareScoreInfo());
-            WriteCsv("MissingPublications.csv", content.GetMissingPublications());
+            Task.WaitAll(
+                WriteCsvAsync("MatchingItemsDiff.csv", content.CompareOldAndNew()),
+                WriteCsvAsync("NewItems.csv", content.GetNewItems()),
+                WriteCsvAsync("MissingSiwReqs.csv", content.GetItemsMissingSiwRequirements()),
+                WriteCsvAsync("MissingScoring.csv", content.GetItemsWithoutScoring()),
+                WriteCsvAsync("ScoreInfoDiff.csv", content.CompareScoreInfo()),
+                WriteCsvAsync("MissingPublications.csv", content.GetMissingPublications()));
         }
+
+        private async Task WriteCsvAsync(string fileName, IEnumerable collection)
+        {
+            await Task.Run(() => WriteCsv(fileName, collection));
+        } 
 
         private void WriteCsv(string fileName, IEnumerable collection)
         {

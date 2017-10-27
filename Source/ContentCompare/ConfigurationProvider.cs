@@ -23,7 +23,7 @@ namespace SGContent
             string appSettingsUrl = "https://raw.githubusercontent.com/SmarterApp/AP_ItemSampler/scoreguide/SmarterBalanced.SampleItems/src/SmarterBalanced.SampleItems.Web/appsettings.json";
             
             SaveDependency(appSettingsUrl, "appsettings.json");
-            logger.LogInformation("Successfully downloaded dependencies");
+            logger.LogInformation("Successfully downloaded settings");
 
             var builder = new ConfigurationBuilder()
               .SetBasePath(Directory.GetCurrentDirectory())
@@ -34,7 +34,7 @@ namespace SGContent
 
             Configuration.Bind(appSettings);
             AppSettings = appSettings;
-            logger.LogInformation("Successfully loaded configuration");
+            
         }
 
         public void DownloadConfigFiles()
@@ -51,6 +51,7 @@ namespace SGContent
                 SaveDependencyAsync(claimsUrl, AppSettings.SbContent.ClaimsXMLPath),
                 SaveDependencyAsync(interactionsUrl, AppSettings.SbContent.InteractionTypesXMLPath),
                 SaveDependencyAsync(standardsUrl, AppSettings.SbContent.CoreStandardsXMLPath));
+            logger.LogInformation("Successfully loaded configuration");
         }
 
         private async Task SaveDependencyAsync(string url, string fileName)
