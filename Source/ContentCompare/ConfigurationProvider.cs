@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace SGContent
 {
@@ -39,19 +40,22 @@ namespace SGContent
         public void DownloadConfigFiles()
         {
             string itemsPatchUrl = "https://raw.githubusercontent.com/SmarterApp/AP_ItemSampler/master/SmarterBalanced.SampleItems/ClaimConfigurations/ItemsPatch.xml";
-            SaveDependency(itemsPatchUrl, AppSettings.SbContent.PatchXMLPath);
-
             string accessibilityUrl = "https://raw.githubusercontent.com/osu-cass/AccessibilityAccommodationConfigurations/05bf8f52863bce54142c9f3bc36db02e475258f4/AccessibilityConfig.xml";
-            SaveDependency(accessibilityUrl, AppSettings.SbContent.AccommodationsXMLPath);
-
             string claimsUrl = "https://raw.githubusercontent.com/SmarterApp/AP_ItemSampler/scoreguide/SmarterBalanced.SampleItems/ClaimConfigurations/ClaimsConfig.xml";
-            SaveDependency(claimsUrl, AppSettings.SbContent.ClaimsXMLPath);
-
             string interactionsUrl = "https://raw.githubusercontent.com/SmarterApp/AP_ItemSampler/scoreguide/SmarterBalanced.SampleItems/InteractionTypeConfigurations/InteractionTypes.xml";
-            SaveDependency(interactionsUrl, AppSettings.SbContent.InteractionTypesXMLPath);
-
             string standardsUrl = "https://raw.githubusercontent.com/SmarterApp/AP_ItemSampler/scoreguide/SmarterBalanced.SampleItems/CoreStandardsConfigurations/CoreStandards.xml";
-            SaveDependency(standardsUrl, AppSettings.SbContent.CoreStandardsXMLPath);
+
+            Task.WaitAll(
+                SaveDependencyAsync(itemsPatchUrl, AppSettings.SbContent.PatchXMLPath),
+                SaveDependencyAsync(accessibilityUrl, AppSettings.SbContent.AccommodationsXMLPath),
+                SaveDependencyAsync(claimsUrl, AppSettings.SbContent.ClaimsXMLPath),
+                SaveDependencyAsync(interactionsUrl, AppSettings.SbContent.InteractionTypesXMLPath),
+                SaveDependencyAsync(standardsUrl, AppSettings.SbContent.CoreStandardsXMLPath));
+        }
+
+        private async Task SaveDependencyAsync(string url, string fileName)
+        {
+            await Task.Run(() => SaveDependency(url, fileName));
         }
 
         private void SaveDependency(string url, string fileName)
