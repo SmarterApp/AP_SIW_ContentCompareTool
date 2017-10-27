@@ -34,7 +34,12 @@ namespace SGContent
                 var scoring = SampleItemsScoringTranslation.ToSampleItemsScore(digest, config.AppSettings, context.InteractionTypes);
                 var standardIdentifier = StandardIdentifierTranslation.ToStandardIdentifier(digest, supportedPubs);
                 return new ItemDigestScoring(digest, scoring, standardIdentifier);
-            }).ToImmutableArray();
+            })
+            .OrderBy(d => d.ItemDigest.SubjectCode)
+            .ThenBy(d => d.Grade)
+            .ThenBy(d => d.StandardIdentifier?.ToClaimId())
+            .ThenBy(d => d.ItemDigest.ItemKey)
+            .ToImmutableArray();
         }
 
         public IEnumerable<Comparison> CompareOldAndNew()
@@ -62,13 +67,12 @@ namespace SGContent
             return newItems;
         }
 
-        //TODO add options
-        public IEnumerable<ItemPrintout> GetItemsWithoutScoring()
+        public IEnumerable<ItemScoringPrintout> GetItemsWithoutScoring()
         {
             var noScoring = newDigestsScoring
                 .Where(digest => !(digest.SampleItemScoring?.Rubrics.Any() ?? false)
                               && !(digest.SampleItemScoring?.ScoringOptions.Any() ?? false))
-                .Select(digest => new ItemPrintout(digest, config.AppSettings));
+                .Select(digest => new ItemScoringPrintout(digest, config.AppSettings));
             return noScoring;
         }
 
