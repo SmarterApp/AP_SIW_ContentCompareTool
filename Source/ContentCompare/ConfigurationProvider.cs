@@ -22,7 +22,7 @@ namespace SGContent
             //TODO: Change this from scoreguide branch to another
             string appSettingsUrl = "https://raw.githubusercontent.com/SmarterApp/AP_ItemSampler/scoreguide/SmarterBalanced.SampleItems/src/SmarterBalanced.SampleItems.Web/appsettings.json";
             
-            SaveDependency(appSettingsUrl, "appsettings.json");
+            SaveDependencyAsync(appSettingsUrl, "appsettings.json").Wait();
             logger.LogInformation("Successfully downloaded settings");
 
             var builder = new ConfigurationBuilder()
@@ -56,18 +56,13 @@ namespace SGContent
 
         private async Task SaveDependencyAsync(string url, string fileName)
         {
-            await Task.Run(() => SaveDependency(url, fileName));
-        }
-
-        private void SaveDependency(string url, string fileName)
-        {
             using (var client = new HttpClient())
             {
-                using (var result = client.GetAsync(url).Result)
+                using (var result = await client.GetAsync(url))
                 {
                     if (result.IsSuccessStatusCode)
                     {
-                        string contents = result.Content.ReadAsStringAsync().Result;
+                        string contents = await result.Content.ReadAsStringAsync();
                         string path = Path.Combine(Directory.GetCurrentDirectory(), fileName);
                         Directory.CreateDirectory(Path.GetDirectoryName(path));
                         if (File.Exists(path))
@@ -76,7 +71,7 @@ namespace SGContent
                             File.Delete(path);
                         }
 
-                        File.WriteAllText(path, contents);
+                        await File.WriteAllTextAsync(path, contents);
                     }
                 }
             }
