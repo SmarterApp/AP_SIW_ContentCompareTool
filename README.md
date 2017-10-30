@@ -17,7 +17,7 @@ There are a few configuration settings that will likely need to be changed befor
 
 - `SbContent.ConrentRootDirectory` should be the absolute path to the root direcory of the old content package 
 - `AppSettings.ContentCompareDirectory` should be the absolute path to the root directory new content package
-- `AppSettings.OutputDirectory` is the directory the files described above are placed in after running the tool. By default, this is [Source/OutputFiles/](Source/OutputFiles/)
+- `AppSettings.OutputDirectory` is the directory the files described above are placed in after running the tool. By default, this is `Source/OutputFiles/`
 
 This project was built using Visual Studio, so it may be easiest to run the tool from there, but you can also compile it and run it wherever the .NET Core runtime is installed. 
 
