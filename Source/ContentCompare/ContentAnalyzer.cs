@@ -17,10 +17,22 @@ namespace SGContent
 
         public ContentAnalyzer(ILoggerFactory loggerFactory, ConfigurationProvider config)
         {
-            content = new ContentCompare(config, loggerFactory);
-            content.LoadAllItems();
-            configurationProvider = config;
             logger = loggerFactory.CreateLogger<ContentAnalyzer>();
+            content = new ContentCompare(config, loggerFactory);
+            try 
+            {
+                content.LoadAllItems();
+            }
+            catch
+            {
+                string oldPath = Path.GetFullPath(config.AppSettings.SbContent.ContentRootDirectory);
+                string newPath = Path.GetFullPath(config.Configuration["AppSettings:ContentCompareDirectory"]);
+                logger.LogCritical($"Error loading items. Ensure that the following paths are correct: \nOld Content: {oldPath}\nNew Content: {newPath}");
+                Environment.Exit(1);
+            }
+            
+            configurationProvider = config;
+            
         }
 
         public void Analyze()
