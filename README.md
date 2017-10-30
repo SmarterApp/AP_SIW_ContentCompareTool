@@ -15,7 +15,7 @@ This command line tool runs a comparison between two versions of the Smarter Bal
 ## Usage
 There are a few configuration settings that will likely need to be changed before you can run the comparison tool. These settings can be found in [appsettings.override.json](Source/ContentCompare/appsettings.override.json).
 
-- `SbContent.ConrentRootDirectory` should be the absolute path to the root direcory of the old content package 
+- `SbContent.ContentRootDirectory` should be the absolute path to the root direcory of the old content package 
 - `AppSettings.ContentCompareDirectory` should be the absolute path to the root directory new content package
 - `AppSettings.OutputDirectory` is the directory the files described above are placed in after running the tool. By default, this is `Source/OutputFiles/`
 
