@@ -16,7 +16,7 @@ namespace SGContent
         public AppSettings AppSettings { get; }
         private readonly ILogger logger;
 
-        public ConfigurationProvider(ILoggerFactory loggerFactory)
+        public ConfigurationProvider(ILoggerFactory loggerFactory, string oldContent, string newContent)
         {
             logger = loggerFactory.CreateLogger<ConfigurationProvider>();
             //TODO: Change this from scoreguide branch to another
@@ -35,6 +35,15 @@ namespace SGContent
             Configuration.Bind(appSettings);
             AppSettings = appSettings;
             
+            if (oldContent != null) 
+            {
+                AppSettings.SbContent.ContentRootDirectory = oldContent;
+                Configuration["SbContent:ContentRootDirectory"] = oldContent;
+            }
+            if (newContent != null)
+            {
+                Configuration["AppSettings:ContentCompareDirectory"] = newContent;
+            }
         }
 
         public void DownloadConfigFiles()

@@ -19,7 +19,7 @@ namespace SGContent
         {
             content = new ContentCompare(config, loggerFactory);
             content.LoadAllItems();
-            configurationProvider = new ConfigurationProvider(loggerFactory);
+            configurationProvider = config;
             logger = loggerFactory.CreateLogger<ContentAnalyzer>();
         }
 
