@@ -21,7 +21,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.0.0" />
-    <PackageReference Include="SmarterBalanced.SampleItems.Dal" Version="1.1.0-alpha-293340965" />
+    <PackageReference Include="SmarterBalanced.SampleItems.Dal" Version="1.1.0-alpha-295401849" />
   </ItemGroup>
 
 </Project>
