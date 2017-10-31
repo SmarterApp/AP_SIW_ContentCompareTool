@@ -17,7 +17,11 @@ namespace SGContent
     {
         private readonly ConfigurationProvider config;
         private readonly ILogger logger;
+
+        // content package
         private ImmutableArray<ItemDigestScoring> newDigestsScoring;
+
+        //Old content package
         private ImmutableArray<SampleItem> oldSampleItems;
 
         public ContentCompare(ConfigurationProvider config, ILoggerFactory loggerFactory)
@@ -119,11 +123,15 @@ namespace SGContent
             return scoreComparison.Where(sc => !sc.Equal);
         }
 
-        public IEnumerable<ItemPrintout> GetMissingPublications()
+        public IEnumerable<ItemPublicationPrintout> GetMissingPublications()
         {
-            var missingPubs = newDigestsScoring
-                .Where(d => String.IsNullOrEmpty(d.StandardIdentifier?.Publication))
-                .Select(d => new ItemPrintout(d, config.AppSettings));
+            var missingPubs =
+                from d in newDigestsScoring
+                join o in oldSampleItems on d.ItemDigest.ItemKey equals o.ItemKey into ds
+                from o in ds.DefaultIfEmpty()
+                where String.IsNullOrEmpty(d.StandardIdentifier?.Publication)
+                select new ItemPublicationPrintout(d, o); 
+
             return missingPubs;
         }
     }
