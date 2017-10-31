@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace SGContent
 {
@@ -15,14 +16,14 @@ namespace SGContent
         public AppSettings AppSettings { get; }
         private readonly ILogger logger;
 
-        public ConfigurationProvider(ILoggerFactory loggerFactory)
+        public ConfigurationProvider(ILoggerFactory loggerFactory, string oldContent, string newContent)
         {
             logger = loggerFactory.CreateLogger<ConfigurationProvider>();
             //TODO: Change this from scoreguide branch to another
             string appSettingsUrl = "https://raw.githubusercontent.com/SmarterApp/AP_ItemSampler/scoreguide/SmarterBalanced.SampleItems/src/SmarterBalanced.SampleItems.Web/appsettings.json";
             
-            SaveDependency(appSettingsUrl, "appsettings.json");
-            logger.LogInformation("Successfully downloaded dependencies");
+            SaveDependencyAsync(appSettingsUrl, "appsettings.json").Wait();
+            logger.LogInformation("Successfully downloaded settings");
 
             var builder = new ConfigurationBuilder()
               .SetBasePath(Directory.GetCurrentDirectory())
@@ -33,36 +34,44 @@ namespace SGContent
 
             Configuration.Bind(appSettings);
             AppSettings = appSettings;
-            logger.LogInformation("Successfully loaded configuration");
+            
+            if (oldContent != null) 
+            {
+                AppSettings.SbContent.ContentRootDirectory = oldContent;
+                Configuration["SbContent:ContentRootDirectory"] = oldContent;
+            }
+            if (newContent != null)
+            {
+                Configuration["AppSettings:ContentCompareDirectory"] = newContent;
+            }
         }
 
         public void DownloadConfigFiles()
         {
             string itemsPatchUrl = "https://raw.githubusercontent.com/SmarterApp/AP_ItemSampler/master/SmarterBalanced.SampleItems/ClaimConfigurations/ItemsPatch.xml";
-            SaveDependency(itemsPatchUrl, AppSettings.SbContent.PatchXMLPath);
-
             string accessibilityUrl = "https://raw.githubusercontent.com/osu-cass/AccessibilityAccommodationConfigurations/05bf8f52863bce54142c9f3bc36db02e475258f4/AccessibilityConfig.xml";
-            SaveDependency(accessibilityUrl, AppSettings.SbContent.AccommodationsXMLPath);
-
             string claimsUrl = "https://raw.githubusercontent.com/SmarterApp/AP_ItemSampler/scoreguide/SmarterBalanced.SampleItems/ClaimConfigurations/ClaimsConfig.xml";
-            SaveDependency(claimsUrl, AppSettings.SbContent.ClaimsXMLPath);
-
             string interactionsUrl = "https://raw.githubusercontent.com/SmarterApp/AP_ItemSampler/scoreguide/SmarterBalanced.SampleItems/InteractionTypeConfigurations/InteractionTypes.xml";
-            SaveDependency(interactionsUrl, AppSettings.SbContent.InteractionTypesXMLPath);
-
             string standardsUrl = "https://raw.githubusercontent.com/SmarterApp/AP_ItemSampler/scoreguide/SmarterBalanced.SampleItems/CoreStandardsConfigurations/CoreStandards.xml";
-            SaveDependency(standardsUrl, AppSettings.SbContent.CoreStandardsXMLPath);
+
+            Task.WaitAll(
+                SaveDependencyAsync(itemsPatchUrl, AppSettings.SbContent.PatchXMLPath),
+                SaveDependencyAsync(accessibilityUrl, AppSettings.SbContent.AccommodationsXMLPath),
+                SaveDependencyAsync(claimsUrl, AppSettings.SbContent.ClaimsXMLPath),
+                SaveDependencyAsync(interactionsUrl, AppSettings.SbContent.InteractionTypesXMLPath),
+                SaveDependencyAsync(standardsUrl, AppSettings.SbContent.CoreStandardsXMLPath));
+            logger.LogInformation("Successfully loaded configuration");
         }
 
-        private void SaveDependency(string url, string fileName)
+        private async Task SaveDependencyAsync(string url, string fileName)
         {
             using (var client = new HttpClient())
             {
-                using (var result = client.GetAsync(url).Result)
+                using (var result = await client.GetAsync(url))
                 {
                     if (result.IsSuccessStatusCode)
                     {
-                        string contents = result.Content.ReadAsStringAsync().Result;
+                        string contents = await result.Content.ReadAsStringAsync();
                         string path = Path.Combine(Directory.GetCurrentDirectory(), fileName);
                         Directory.CreateDirectory(Path.GetDirectoryName(path));
                         if (File.Exists(path))
@@ -71,7 +80,7 @@ namespace SGContent
                             File.Delete(path);
                         }
 
-                        File.WriteAllText(path, contents);
+                        await File.WriteAllTextAsync(path, contents);
                     }
                 }
             }

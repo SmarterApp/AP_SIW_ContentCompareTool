@@ -9,27 +9,35 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace SGContent
 {
     public class ContentCompare
     {
-        private readonly ImmutableArray<ItemDigestScoring> newDigestsScoring;
-        private readonly ImmutableArray<SampleItem> oldSampleItems;
         private readonly ConfigurationProvider config;
         private readonly ILogger logger;
+        private ImmutableArray<ItemDigestScoring> newDigestsScoring;
+        private ImmutableArray<SampleItem> oldSampleItems;
 
         public ContentCompare(ConfigurationProvider config, ILoggerFactory loggerFactory)
         {
             logger = loggerFactory.CreateLogger<ContentCompare>();
             this.config = config;
-            var newItemDigests = SampleItemsProvider
-                .LoadItemDigests(config.Configuration["AppSettings:ContentCompareDirectory"]).Result;
-            var context = SampleItemsProvider.LoadContext(config.AppSettings, logger);
-            oldSampleItems = context.SampleItems;
-            var supportedPubs = config.AppSettings.SbContent.SupportedPublications;
+        }
 
-            newDigestsScoring = newItemDigests.Select(digest =>
+        public void LoadAllItems()
+        {
+            string newDigestsDir = config.Configuration["AppSettings:ContentCompareDirectory"];
+            string[] supportedPubs = config.AppSettings.SbContent.SupportedPublications;
+            ImmutableArray<ItemDigest> digests;
+            SampleItemsContext context = null;
+
+            Task.WaitAll(
+                Task.Run(() => context = SampleItemsProvider.LoadContext(config.AppSettings, logger)),
+                Task.Run(() => digests = SampleItemsProvider.LoadItemDigests(newDigestsDir).Result));
+
+            newDigestsScoring = digests.Select(digest =>
             {
                 var scoring = SampleItemsScoringTranslation.ToSampleItemsScore(digest, config.AppSettings, context.InteractionTypes);
                 var standardIdentifier = StandardIdentifierTranslation.ToStandardIdentifier(digest, supportedPubs);
@@ -40,6 +48,7 @@ namespace SGContent
             .ThenBy(d => d.StandardIdentifier?.ToClaimId())
             .ThenBy(d => d.ItemDigest.ItemKey)
             .ToImmutableArray();
+            oldSampleItems = context.SampleItems;
         }
 
         public IEnumerable<Comparison> CompareOldAndNew()
